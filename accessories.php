@@ -39,7 +39,7 @@
     ?>
 </footer>
 <script>
-$(document).ready(function(){
+/* $(document).ready(function(){
     var count = 4;
     $(window).scroll(function(){
         var wrap = document.getElementById('wrapDiv-bath');
@@ -54,7 +54,7 @@ $(document).ready(function(){
             });
         }
     });
-});
+}); */
 
 </script>
 </body>

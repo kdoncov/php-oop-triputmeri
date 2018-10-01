@@ -1,7 +1,4 @@
 <?php
-/**
- * Created by Chris on 9/29/2014 3:55 PM.
- */
 
 class Redirect {
     public static function to($location = null) {

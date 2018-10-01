@@ -1,7 +1,4 @@
 <?php
-/**
- * Created by Chris on 9/29/2014 3:56 PM.
- */
 
 class Session {
     public static function exists($name) {

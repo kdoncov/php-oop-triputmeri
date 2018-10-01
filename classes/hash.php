@@ -1,7 +1,4 @@
 <?php
-/**
- * Created by Chris on 9/29/2014 3:55 PM.
- */
 
 class Hash {
     public static function make($string, $salt = '') {
