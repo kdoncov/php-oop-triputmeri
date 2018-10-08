@@ -7,7 +7,7 @@ $GLOBALS['config'] = array(
     'host' => 'localhost',
     'username' => 'root',
     'password' =>  '',
-    'db' => 'estudos_skillfeed'
+    'db' => 'triput_meri'
   ),
   'remember' => array(
     'cookie_name' => 'hash',

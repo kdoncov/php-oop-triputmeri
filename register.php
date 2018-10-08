@@ -1,6 +1,7 @@
 
 
 <?php
+
 // Core Initialization
 require_once 'core/init.php';
 
@@ -14,19 +15,24 @@ require_once 'core/init.php';
       //echo Input::get('password_again');
       $validate = new Validate();
       $validation = $validate->check($_POST, array(
-        'name' => array(
+        'username' => array(
           'required' => true,
           'min' => 2,
           'max' => 20,
           'unique' => 'users'
         ),
-        'email' => array(
-          'required' => true,
-          'min' => 6
-        ),
         'password' => array(
           'required' => true,
           'min' => 6
+        ),
+        'password_again' => array(
+          'required' => true,
+          'matches' => 'password'
+        ),
+        'name' => array(
+          'required' => true,
+          'min' => 2,
+          'max' => 50
         )
       ));
 
@@ -37,7 +43,7 @@ require_once 'core/init.php';
           $user = new User();
           try {
 
-            //$salt = Hash::salt(32);
+            $salt = Hash::salt(32);
 
             //echo "<meta charset='utf-8'><pre>";
             //print_r($salt);
@@ -46,14 +52,18 @@ require_once 'core/init.php';
             //die();
 
             $user->create(array(
-              'username' => Input::get('name'),
-              'password' => Hash::make(Input::get('password')),
+              'username' => Input::get('username'),
+              'password' => Hash::make(Input::get('password'), $salt),
+              'salt' => $salt,
+              'name' => Input::get('name'),
+              'joined' => date('Y-m-d H:i:s'),
+              'group' => 1
               //'' => '',
             ));
 
             Session::flash('home', 'You have been registered and can now log in!');
             //header('Location: index.php');
-            Redirect::to(404); // 'index.php'
+          
 
           } catch (Exception $e) {
             die($e->getMessage());
@@ -86,7 +96,7 @@ require_once 'core/init.php';
 <div class="login_form">
         <h1>Customer Registration</h1>
     <div class="group">
-        <form action="" method="POST">
+        <!-- <form action="" method="POST"> *******moja forma izbačena************
             <label for="name">Username</label><br>
             <input type="text" name="name" required="required" /><br>
             <label for="email">Email address</label><br>
@@ -95,8 +105,33 @@ require_once 'core/init.php';
             <input type="password" name="password" required="required" /><br>
             <input type="hidden" name="token" value="<?php echo Token::generate(); ?>">
             <input type="submit" value="REGISTER"/><span>or</span><a href="index.php">Return to Store</a><br>
-            <span>Already have an account?</span> <a href="login.php">Login</a>.
-        </form>
+            <span>Already have an account?</span> <a href="login.php">Login</a>
+        </form> -->
+        <form class="" action="" method="post">
+  <div class="field form-group">
+    <label for="name">Your Name</label>
+    <input type="text" class="form-control" name="name" value="<?php echo escape(Input::get('name')); ?>" id="name" autocomplete="off">
+  </div>
+
+  <div class="field form-group">
+    <label for="username">Username</label>
+    <input type="text" class="form-control" name="username" value="<?php echo escape(Input::get('username')); ?>" id="username" autocomplete="off">
+  </div>
+
+  <div class="field form-group">
+    <label for="password">Choose a password</label>
+    <input type="password" class="form-control" name="password" value="" id="password" autocomplete="off">
+  </div>
+
+  <div class="field form-group">
+    <label for="password_again">Enter your password again</label>
+    <input type="password" class="form-control" name="password_again" value="" id="password_again" autocomplete="off">
+  </div>
+  <input type="hidden" name="token" value="<?php echo Token::generate(); ?>">
+  <input type="submit" value="REGISTER"/><span>or</span><a href="index.php">Return to Store</a><br>
+    <span>Already have an account?</span> <a href="login.php">Login</a>
+
+</form>
     </div>
 </div>
 
@@ -106,45 +141,5 @@ require_once 'core/init.php';
     ?>
 </footer>
 
-
-<!-- <?php
-        
-    if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    
-        $conn = mysqli_connect("localhost","root","") or die("cannot connect to database");
-        $db = mysqli_select_db($conn, "triput_meri") or die("cannot connect to database");
-        $email = mysqli_real_escape_string($conn, $_POST['email']);
-        $name = mysqli_real_escape_string($conn, $_POST['name']);
-        $password = mysqli_real_escape_string($conn, $_POST['password']);
-        $bool = true; 
-        $query = mysqli_query($conn, "SELECT * FROM customer WHERE Name = '$name' OR Email = '$email' ");
-        $exists = mysqli_num_rows($query); //Checks if username exists
-        if($exists > 0){
-
-            while ($row = mysqli_fetch_array($query)) {
-                $table_name = $row['Name'];
-                $table_email = $row['Email'];
-                    if($name == $table_name){
-                        Print '<script>alert("username has been taken!");</script>';
-                    }
-                    elseif($email == $table_email) {
-                        Print '<script>alert("email has been taken!");</script>';
-                        /* Print '<script>location.assign("register.php");</script>'; */
-                    } 
-            } 
-
-
-            
-        }
-        
-    
-        else {
-            $hashedPwd = password_hash($password, PASSWORD_DEFAULT);
-            mysqli_query($conn, "INSERT INTO customer (Name, Email, Password) VALUES ('$name', '$email', '$hashedPwd')");
-            Print '<script>alert("Succesfully Registered!");</script>';
-            Print '<script>location.assign("login.php");</script>';
-        }
-    }
-    ?> -->
 </body>
 </html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>memory game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+    
+    body {
+        background: rgb(211, 211, 211);
+        margin: 0;
+        padding: 0;
+
+        
+    }
+    .start {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        width: 100px;
+        padding: 8px;
+        font-size: 16px;
+        z-index: 1;
+    }
+    .count {
+        position: absolute;
+        top: 15%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        font-size: 18px;
+    }
+    .box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        width: 400px;
+        height: 400px;
+    }
+    .tiles {
+        /* width: 100px;
+        height: 100px; */
+        position: relative;
+        float: left;
+        border: 2px solid rgb(211, 211, 211);
+        background: rgb(93, 149, 172);
+        text-align: center;
+        cursor: pointer;
+        border-radius: 10px;
+        
+        color: rgb(93, 149, 172);
+    }
+    p {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        margin: auto;
+        line-height: 100px; 
+        vertical-align: middle;
+        color: rgb(93, 149, 172);
+    }
+    .level {
+        background: rgb(255, 255, 255);
+        padding: 20px;
+        width: 400px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+    .level button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: rgb(93, 149, 172);
+        color: white;
+        border: none;
+        font-size: 16px;
+        margin: 5px auto;
+        
+        border-radius: 10px;
+    }
+    @media only screen and (max-width: 650px) {
+        .box {
+            width: 92vw;
+            height: 92vw;
+        
+        }
+        .level {
+            width: 100%;
+        }
+    }
+
+</style>
+<body>
+    <script>
+    $(document).ready(function () {
+        // odabir nivoa	
+        function choseLevel(){
+            $(".box").css("display","none");
+            $('body').append(
+                "<div class='level'>\
+                    <button type='button' value='16'>easy</button>\
+                    <button type='button'  value='36'>medium</button>\
+                    <button type='button' value='64'>hard</button>\
+                </div>");
+        }
+        choseLevel();
+        
+        // pocetak igrice
+        $('button').click(function() {
+
+            var x = $(this).attr("value");
+            var dimensions = 100/Math.sqrt(x);
+        $(".level").css("display","none");
+        $('body').append("<span class='count'></span><div class='box'></div><button type='button' class='start'>START</button>");
+
+        //pravljenje niza polja u zavisnosti od odabira nivoa
+        var myArray = [];
+        for(let i=1; i<=x/2; i++){
+            for(let j=0; j<2;j++){
+                myArray.push(i);
+            }
+        }
+        
+        //rantom brojevi u poljima
+        for (let i =0; i<x; i++){
+            var numb = Math.floor(Math.random()*myArray.length);
+            $('.box').append("<div class='tiles'><p>"+myArray[numb]+"</p></div>");
+            $(".tiles").css({"width": dimensions+"%" , "height":dimensions+"%"});
+            $("p").css("font-size",120/Math.sqrt(x)+"px");
+            myArray.splice(numb, 1);
+            }
+
+        var timer;  
+        var timeout;
+        var compare = [];
+        var temp = [];
+        var open = [];
+        var t = document.getElementsByClassName("tiles");
+
+        $('.start').click(function() {
+                var count = 0;
+                $(".start").css("display","none");
+                // brojač
+                timer = setInterval(() => {
+                count++;
+                if(10 < count && count < 15){
+                    $(".count").html("Brže malo!");
+                } else {
+
+                    $(".count").html(count); }
+                }, 1000);
+
+    $(".tiles").click(function(){
+            var index = $(".tiles").index( this );
+            if(!temp.includes(index)){
+                temp.push(index);
+                compare.push($(this).html());
+            }
+            
+            if(temp.length<3){
+                $(this).css({"background":"white"});
+
+            };
+                if(temp.length == 2){
+                    
+                    timeout = setTimeout(() => {
+                        if (compare[0] == compare[1]){ 
+                            
+                            for(var y=0; y<2; y++){
+                                open.push(temp[y]);}
+
+                                if(open.length==x){
+                                    switch (x) {
+                                        case "16":
+                                        alert('Bravo Anči rešeno za '+count+" sek.");
+                                            break;
+                                            case "36":
+                                        alert('Kosica expert rešeno za '+count+" sek.");
+                                            break;
+                                            case "64":
+                                        alert('svaka čast kako te ne mrzi da rešavaš ovo');
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    //alert('bravo Anči rešeno za '+count+" sek.");
+                                    window.location.reload();
+                                }
+                            compare = [];
+                            temp = [];
+                        } else {
+                        for(var j=0; j<2; j++){
+                            if(!open.includes(temp[j])){
+                                t[temp[j]].style.background = "rgb(93, 149, 172)";
+                            }
+                            
+                        }
+                        compare = [];
+                        temp = [];
+                }}, 800); 
+                }
+        });
+                
+            });
+
+        
+        }); 
+    });
+    </script>
+</body>
+</html>
